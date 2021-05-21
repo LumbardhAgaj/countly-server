@@ -1,0 +1,38 @@
+<script type="text/x-template" id="times-of-day">
+    <div v-bind:class="[componentId]">
+        <cly-header>
+            <template v-slot:header-left>
+                <h2> {{i18n('times-of-day.plugin-title')}} 
+                </h2>
+                <span class="el-icon-info" style="margin-left:10px" v-tooltip.top-center="description">
+                </span>
+            </template>
+        </cly-header>
+        <cly-main>
+            <times-of-day-map-chart> </times-of-day-map-chart>
+            <times-of-day-table> </times-of-day-table>
+        </cly-main>
+    </div>
+</script>
+<script type="text/x-template" id="times-of-day-map-chart">
+    <cly-section>
+        <cly-chart-time :height="400" v-loading="isLoading"></cly-chart-bar>
+    </cly-section>
+</script>
+
+<script type="text/x-template" id="times-of-day-table">
+    <cly-section>
+        <cly-datatable-n  :rows="timesOfDayRows" :resizable="true" v-loading="isLoading">
+            <template v-slot="scope">
+                <el-table-column sortable="custom" prop="hours" :label="i18n('times-of-day.table-period')">
+                </el-table-column>
+                <el-table-column sortable="custom" prop="count" :label="i18n('times-of-day.table-count')">
+                </el-table-column>
+                <el-table-column sortable="custom" prop="percentage" :label="i18n('times-of-day.table-percentage')">
+                </el-table-column>
+                <el-table-column prop="timeStamp">
+                </el-table-column>
+            </template>
+        </cly-datatable-n>
+    </cly-section>
+</script>
