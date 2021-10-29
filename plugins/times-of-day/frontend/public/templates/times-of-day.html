@@ -26,7 +26,7 @@
         <cly-section>
             <cly-datatable-n  :rows="timesOfDayRows" :resizable="false" v-loading="isLoading">
                 <template v-slot="scope">
-                    <el-table-column fixed width="240" sortable="custom" prop="period" :label="i18n('times-of-day.table-hours-period')">
+                    <el-table-column fixed width="240" sortable="custom" prop="period" :label="i18n('times-of-day.hours')">
                     </el-table-column>
                     <el-table-column  width="240" sortable="custom" prop="monday" :label="i18n('times-of-day.monday')">
                         <template slot-scope="scope">

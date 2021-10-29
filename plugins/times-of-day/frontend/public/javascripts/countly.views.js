@@ -41,15 +41,24 @@ var TimesOfDayView = countlyVue.views.create({
                     }
                 },
                 xAxis: {
+                    boundaryGap: true,
                     data: countlyTimesOfDay.service.HOURS,
+                    type: 'category',
+                    name: CV.i18n('times-of-day.hours'),
+                    nameLocation: "start",
+                    nameTextStyle: {
+                        verticalAlign: "top",
+                        lineHeight: 24,
+                    },
                     splitLine: {
                         show: true
                     },
                     axisLine: {
                         show: false
-                    }
+                    },
                 },
                 yAxis: {
+                    boundaryGap: true,
                     type: 'category',
                     data: [
                         CV.i18n('times-of-day.monday'),
@@ -60,22 +69,31 @@ var TimesOfDayView = countlyVue.views.create({
                         CV.i18n('times-of-day.saturday'),
                         CV.i18n('times-of-day.sunday')
                     ],
-                    nameLocation: 'middle',
-                    boundaryGap: true,
-                    axisTick: {
-                        alignWithLabel: true
-                    }
                 },
+                visualMap: [{
+                    min: 0,
+                    max: this.$store.state.countlyTimesOfDay.maxSeriesValue,
+                    calculable: false,
+                    inRange: {
+                        color: ['#E2F8F9', '#39C0C8']
+                    },
+                    show: false,
+                }],
                 series: [{
                     name: CV.i18n('times-of-day.title'),
-                    type: "scatter",
-                    symbolSize: function(val) {
-                        var dataIndexValue = 2;
-                        return val[dataIndexValue] * self.normalizedSymbolCoefficient;
-                    },
+                    type: "heatmap",
                     data: this.$store.state.countlyTimesOfDay.series,
+                    label: {
+                        show: true
+                    },
+                    emphasis: {
+                        itemStyle: {
+                            shadowBlur: 10,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
                 }],
-                color: "#39C0C8"
+
             };
         },
         selectedFilter: {
