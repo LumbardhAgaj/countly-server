@@ -1,12 +1,17 @@
 /*global $,countlyAuth,countlyGlobal,T,countlyWidgets,jQuery,countlyCommon,app,countlyDashboards,countlyVue,countlyTimesOfDay,CV */
 
 var featureName = "times_of_day";
-var EXTRA_LARGE_SCREEN_MAX_SYMBOL_SIZE = 55;
-var LARGE_SCREEN_MAX_SYMBOL_SIZE = 35;
-var MEDIUM_TO_LARGE_SCREEN_MAX_SYMBOL_SIZE = 30;
-var MEDIUM_SCREEN_MAX_SYMBOL_SIZE = 26;
-var SMALL_TO_MEDIUM_SCREEN_MAX_SYMBOL_SIZE = 24;
+var WIDE_SCREEN_MAX_SYMBOL_SIZE = 53;
+var EXTRA_LARGE_SCREEN_MAX_SYMBOL_SIZE = 39;
+var LARGE_SCREEN_MAX_SYMBOL_SIZE = 30;
+var MEDIUM_SCREEN_MAX_SYMBOL_SIZE = 22;
 var SMALL_SCREEN_MAX_SYMBOL_SIZE = 20;
+
+var WIDE_SCREEN_MIN_WIDTH = 1824;
+var EXTRA_LARGE_SCREEN_MIN_WIDTH = 1441;
+var LARGE_SCREEN_MIN_WIDTH = 1224;
+var MEDIUM_SCREEN_MIN_WIDTH = 768;
+
 
 var TimesOfDayView = countlyVue.views.create({
     template: CV.T('/times-of-day/templates/times-of-day.html'),
@@ -115,37 +120,31 @@ var TimesOfDayView = countlyVue.views.create({
             this.$store.dispatch('countlyTimesOfDay/fetchAll', false);
         },
         getMaxSymbolSize: function() {
+            if (this.isWideScreen()) {
+                return WIDE_SCREEN_MAX_SYMBOL_SIZE;
+            }
             if (this.isExtraLargeScreen()) {
                 return EXTRA_LARGE_SCREEN_MAX_SYMBOL_SIZE;
             }
             if (this.isLargeScreen()) {
                 return LARGE_SCREEN_MAX_SYMBOL_SIZE;
             }
-            if (this.isMediumToLargeScreen()) {
-                return MEDIUM_TO_LARGE_SCREEN_MAX_SYMBOL_SIZE;
-            }
             if (this.isMediumScreen()) {
                 return MEDIUM_SCREEN_MAX_SYMBOL_SIZE;
             }
-            if (this.isSmallToMediumScreen()) {
-                return SMALL_TO_MEDIUM_SCREEN_MAX_SYMBOL_SIZE;
-            }
             return SMALL_SCREEN_MAX_SYMBOL_SIZE;
         },
+        isWideScreen: function() {
+            return window.innerWidth > WIDE_SCREEN_MIN_WIDTH;
+        },
         isExtraLargeScreen: function() {
-            return window.innerWidth > 1824;
+            return window.innerWidth <= WIDE_SCREEN_MIN_WIDTH && window.innerWidth > EXTRA_LARGE_SCREEN_MIN_WIDTH;
         },
         isLargeScreen: function() {
-            return window.innerWidth <= 1824 && window.innerWidth > 1224;
-        },
-        isMediumToLargeScreen: function() {
-            return window.innerWidth <= 1224 && window.innerWidth > 1024;
+            return window.innerWidth <= EXTRA_LARGE_SCREEN_MIN_WIDTH && window.innerWidth > LARGE_SCREEN_MIN_WIDTH;
         },
         isMediumScreen: function() {
-            return window.innerWidth <= 1024 && window.innerWidth > 768;
-        },
-        isSmallToMediumScreen: function() {
-            return window.innerWidth <= 768 && window.innerWidth > 576;
+            return window.innerWidth <= LARGE_SCREEN_MIN_WIDTH && window.innerWidth > MEDIUM_SCREEN_MIN_WIDTH;
         },
     },
     mounted: function() {
