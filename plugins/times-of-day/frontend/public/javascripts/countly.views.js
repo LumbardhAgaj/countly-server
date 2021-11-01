@@ -105,11 +105,7 @@ var TimesOfDayView = countlyVue.views.create({
     },
     methods: {
         normalizedSymbolCoefficient: function() {
-            var maxSize = this.getMaxSymbolSize();
-            if (this.$store.state.countlyTimesOfDay.maxSeriesValue < maxSize) {
-                return 1;
-            }
-            return maxSize / this.$store.state.countlyTimesOfDay.maxSeriesValue;
+            return this.getMaxSymbolSize() / this.$store.state.countlyTimesOfDay.maxSeriesValue;
         },
         onSelectDateBucket: function(value) {
             this.$store.dispatch('countlyTimesOfDay/setFilters', {dataType: this.$store.state.countlyTimesOfDay.filters.dataType, dateBucketValue: value});
