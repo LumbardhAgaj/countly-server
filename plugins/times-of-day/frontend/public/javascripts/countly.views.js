@@ -54,6 +54,7 @@ var TimesOfDayView = countlyVue.views.create({
                     nameTextStyle: {
                         verticalAlign: "top",
                         lineHeight: 24,
+                        color: "#A7AEB8"
                     },
                     splitLine: {
                         show: true
@@ -85,6 +86,9 @@ var TimesOfDayView = countlyVue.views.create({
                     symbolSize: function(val) {
                         var dataIndexValue = 2;
                         return val[dataIndexValue] * self.normalizedSymbolCoefficient();
+                    },
+                    itemStyle: {
+                        color: "#39C0C8"
                     },
                     symbolKeepAspect: true,
                     universalTransition: true,
