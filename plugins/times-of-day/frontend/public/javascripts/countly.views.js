@@ -1,7 +1,12 @@
 /*global $,countlyAuth,countlyGlobal,T,countlyWidgets,jQuery,countlyCommon,app,countlyDashboards,countlyVue,countlyTimesOfDay,CV */
 
 var featureName = "times_of_day";
-var MAX_SYMBOL_VALUE = 50;
+var EXTRA_LARGE_SCREEN_MAX_SYMBOL_SIZE = 55;
+var LARGE_SCREEN_MAX_SYMBOL_SIZE = 35;
+var MEDIUM_TO_LARGE_SCREEN_MAX_SYMBOL_SIZE = 30;
+var MEDIUM_SCREEN_MAX_SYMBOL_SIZE = 26;
+var SMALL_TO_MEDIUM_SCREEN_MAX_SYMBOL_SIZE = 24;
+var SMALL_SCREEN_MAX_SYMBOL_SIZE = 20;
 
 var TimesOfDayView = countlyVue.views.create({
     template: CV.T('/times-of-day/templates/times-of-day.html'),
@@ -17,12 +22,7 @@ var TimesOfDayView = countlyVue.views.create({
         isLoading: function() {
             return this.$store.getters['countlyTimesOfDay/isLoading'];
         },
-        normalizedSymbolCoefficient: function() {
-            if (this.$store.state.countlyTimesOfDay.maxSeriesValue < MAX_SYMBOL_VALUE) {
-                return 1;
-            }
-            return MAX_SYMBOL_VALUE / this.$store.state.countlyTimesOfDay.maxSeriesValue;
-        },
+
         timesOfDayOptions: function() {
             var self = this;
             return {
@@ -69,31 +69,22 @@ var TimesOfDayView = countlyVue.views.create({
                         CV.i18n('times-of-day.saturday'),
                         CV.i18n('times-of-day.sunday')
                     ],
+                    nameLocation: 'middle',
+
                 },
-                visualMap: [{
-                    min: 0,
-                    max: this.$store.state.countlyTimesOfDay.maxSeriesValue,
-                    calculable: false,
-                    inRange: {
-                        color: ['#E2F8F9', '#39C0C8']
-                    },
-                    show: false,
-                }],
                 series: [{
                     name: CV.i18n('times-of-day.title'),
-                    type: "heatmap",
+                    type: "scatter",
                     data: this.$store.state.countlyTimesOfDay.series,
-                    label: {
-                        show: true
+                    symbol: "circle",
+                    symbolSize: function(val) {
+                        var dataIndexValue = 2;
+                        return val[dataIndexValue] * self.normalizedSymbolCoefficient();
                     },
-                    emphasis: {
-                        itemStyle: {
-                            shadowBlur: 10,
-                            shadowColor: 'rgba(0, 0, 0, 0.5)'
-                        }
-                    }
+                    symbolKeepAspect: true,
+                    universalTransition: true,
                 }],
-
+                color: "#39C0C8"
             };
         },
         selectedFilter: {
@@ -113,13 +104,53 @@ var TimesOfDayView = countlyVue.views.create({
         }
     },
     methods: {
+        normalizedSymbolCoefficient: function() {
+            var maxSize = this.getMaxSymbolSize();
+            if (this.$store.state.countlyTimesOfDay.maxSeriesValue < maxSize) {
+                return 1;
+            }
+            return maxSize / this.$store.state.countlyTimesOfDay.maxSeriesValue;
+        },
         onSelectDateBucket: function(value) {
             this.$store.dispatch('countlyTimesOfDay/setFilters', {dataType: this.$store.state.countlyTimesOfDay.filters.dataType, dateBucketValue: value});
             this.$store.dispatch('countlyTimesOfDay/fetchAll', true);
         },
         refresh: function() {
             this.$store.dispatch('countlyTimesOfDay/fetchAll', false);
-        }
+        },
+        getMaxSymbolSize: function() {
+            if (this.isExtraLargeScreen()) {
+                return EXTRA_LARGE_SCREEN_MAX_SYMBOL_SIZE;
+            }
+            if (this.isLargeScreen()) {
+                return LARGE_SCREEN_MAX_SYMBOL_SIZE;
+            }
+            if (this.isMediumToLargeScreen()) {
+                return MEDIUM_TO_LARGE_SCREEN_MAX_SYMBOL_SIZE;
+            }
+            if (this.isMediumScreen()) {
+                return MEDIUM_SCREEN_MAX_SYMBOL_SIZE;
+            }
+            if (this.isSmallToMediumScreen()) {
+                return SMALL_TO_MEDIUM_SCREEN_MAX_SYMBOL_SIZE;
+            }
+            return SMALL_SCREEN_MAX_SYMBOL_SIZE;
+        },
+        isExtraLargeScreen: function() {
+            return window.innerWidth > 1824;
+        },
+        isLargeScreen: function() {
+            return window.innerWidth <= 1824 && window.innerWidth > 1224;
+        },
+        isMediumToLargeScreen: function() {
+            return window.innerWidth <= 1224 && window.innerWidth > 1024;
+        },
+        isMediumScreen: function() {
+            return window.innerWidth <= 1024 && window.innerWidth > 768;
+        },
+        isSmallToMediumScreen: function() {
+            return window.innerWidth <= 768 && window.innerWidth > 576;
+        },
     },
     mounted: function() {
         this.$store.dispatch('countlyTimesOfDay/fetchAll', true);
