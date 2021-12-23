@@ -1,4 +1,4 @@
-/* global countlyVue,app,CV,countlyPushNotification,countlyPushNotificationComponent,CountlyHelpers,jQuery,countlyCommon,$,countlyGlobal,countlyAuth,Promise*/
+/* global countlyVue,app,CV,countlyPushNotification,countlyPushNotificationComponent,CountlyHelpers,countlyCommon,$,countlyGlobal,countlyAuth,Promise*/
 
 (function() {
 
@@ -1930,6 +1930,39 @@
     addDrawerToDrillMainView();
     addDrawerToUserProfilesMainView();
 
+    var CustomDashboardPushNotificationDrawer = countlyVue.views.create({
+
+    });
+
+    var CustomDashboardGrid = countlyVue.views.create({
+
+    });
+
+    countlyVue.container.registerData('/custom/dashboards/widget', {
+        type: "push-notification",
+        label: CV.i18n('push-notification.title'),
+        priority: 6,
+        drawer: {
+            component: CustomDashboardPushNotificationDrawer,
+            getEmpty: function() {
+                return {};
+            },
+            beforeLoadFn: function() {},
+            beforeSaveFn: function() {}
+        },
+        grid: {
+            component: CustomDashboardGrid,
+            dimensions: function() {
+                return {
+                    minWidth: 4,
+                    minHeight: 3,
+                    width: 4,
+                    height: 3
+                };
+            }
+        }
+    });
+
 
     //countly.view global management settings
     $(document).ready(function() {
@@ -1943,29 +1976,29 @@
             app.configurationsView.registerLabel("push.proxyport", "push.proxyport");
         }
 
-        var notes = countlyGlobal.member.notes;
-        if (notes && notes.push && notes.push.gcm && notes.push.gcm !== true) {
-            CountlyHelpers.notify({
-                type: 'error',
-                title: jQuery.i18n.map['push.note.gcm.t'],
-                message: jQuery.i18n.prop('push.note.gcm.m', notes.push.gcm.apps.map(function(a) {
-                    return a.name;
-                }).join(', ')),
-                sticky: true,
-                onClick: function() {
-                    return $.ajax({
-                        type: "GET",
-                        url: countlyCommon.API_URL + "/i/users/ack",
-                        data: {
-                            path: 'push.gcm'
-                        },
-                        success: function() {
-                            notes.push.gcm = true;
-                        }
-                    });
-                }
-            });
-        }
+        // var notes = countlyGlobal.member.notes;
+        // if (notes && notes.push && notes.push.gcm && notes.push.gcm !== true) {
+        //     CountlyHelpers.notify({
+        //         type: 'error',
+        //         title: jQuery.i18n.map['push.note.gcm.t'],
+        //         message: jQuery.i18n.prop('push.note.gcm.m', notes.push.gcm.apps.map(function(a) {
+        //             return a.name;
+        //         }).join(', ')),
+        //         sticky: true,
+        //         onClick: function() {
+        //             return $.ajax({
+        //                 type: "GET",
+        //                 url: countlyCommon.API_URL + "/i/users/ack",
+        //                 data: {
+        //                     path: 'push.gcm'
+        //                 },
+        //                 success: function() {
+        //                     notes.push.gcm = true;
+        //                 }
+        //             });
+        //         }
+        //     });
+        // }
 
     });
 }());
